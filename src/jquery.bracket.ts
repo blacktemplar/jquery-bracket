@@ -91,6 +91,7 @@ interface DoneCallback {
 interface Decorator {
   edit: (span: JQuery, name: string, done_fn: DoneCallback) => void;
   render: (container: JQuery, team: string, score: any) => void;
+  renderMatch: (container: JQuery, match: string) => void;
 }
 
 interface InitData {
@@ -224,6 +225,10 @@ interface Options {
 
   function defaultRender(container: JQuery, team: string, score: any): void {
     container.append(team);
+  }
+
+  function defaultRenderMatch(container: JQuery, data: string): void {
+    return;
   }
 
   function winnerBubbles(match: Match): boolean {
@@ -702,11 +707,11 @@ interface Options {
       opts.userData = null;
     }
 
-    if (opts.decorator && (!opts.decorator.edit || !opts.decorator.render)) {
+    if (opts.decorator && (!opts.decorator.edit || !opts.decorator.render || !opts.decorator.renderMatch)) {
       throw Error('Invalid decorator input');
     }
     else if (!opts.decorator) {
-      opts.decorator = {edit: defaultEdit, render: defaultRender};
+      opts.decorator = {edit: defaultEdit, render: defaultRender, renderMatch: defaultRenderMatch};
     }
 
     var data;
@@ -1018,6 +1023,10 @@ interface Options {
           if (!isLast) {
             this.connect(connectorCb);
           }
+
+          const matchUserData = (results ? results[2] : null);
+          opts.decorator.renderMatch(teamCon, matchUserData);
+
         },
         results: function() {
           return [match.a.score, match.b.score];
