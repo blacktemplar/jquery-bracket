@@ -156,6 +156,12 @@ interface Options {
   }
 
   function matchWinner(match: MatchResult): TeamBlock {
+    if (!match.a.source().name) {
+      return match.b;
+    }
+    if (!match.b.source().name) {
+      return match.a;
+    }
     return teamsInResultOrder(match)[0] || emptyTeam();
   }
 
