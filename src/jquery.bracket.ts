@@ -139,6 +139,11 @@ interface Options {
     return a;
   }
 
+  function drawTeam(): TeamBlock {
+     return {source: null, name: 'team-draw', id: -2, idx: -1, score: 0};
+  }
+
+
   function emptyTeam(): TeamBlock {
      return {source: null, name: null, id: -1, idx: -1, score: null};
   }
@@ -150,18 +155,14 @@ interface Options {
       }
       else if (match.a.score < match.b.score) {
         return [match.b, match.a];
+      } else {
+        return [drawTeam()];
       }
     }
     return [];
   }
 
   function matchWinner(match: MatchResult): TeamBlock {
-    if (!match.a.source().name) {
-      return match.b;
-    }
-    if (!match.b.source().name) {
-      return match.a;
-    }
     return teamsInResultOrder(match)[0] || emptyTeam();
   }
 
