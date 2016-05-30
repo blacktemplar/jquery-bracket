@@ -925,7 +925,6 @@ interface Options {
       if ((!match.a.name || !match.b.name) && (isNumber(match.a.score) || isNumber(match.b.score))) {
         console.log('ERROR IN SCORE DATA: ' + match.a.source().name + ': ' +
           match.a.score + ', ' + match.b.source().name + ': ' + match.b.score);
-        match.a.score = match.b.score = null;
       }
 
       return {
