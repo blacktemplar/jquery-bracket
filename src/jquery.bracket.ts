@@ -113,6 +113,9 @@ interface Options {
   onMatchHover: (data: any, hover: boolean) => void;
   roundWidth: number;
   teamHeight: number;
+  allowRenaming: boolean;
+  allowResizing: boolean;
+  allowChangingScores: boolean;
 }
 
 (function($) {
@@ -804,30 +807,32 @@ interface Options {
         tEl.append(sEl);
 
         if (!(team.name === null || !isReady || !opts.save) && opts.save) {
-          nEl.addClass('editable');
-          nEl.click(function() {
-            const span = $(this);
+          if (opts.allowRenaming) {
+            nEl.addClass('editable');
+            nEl.click(function() {
+              const span = $(this);
 
-            function editor() {
-              function done_fn(val, next: boolean) {
-                if (val) {
-                  opts.init.teams[~~(team.idx / 2)][team.idx % 2] = val;
+              function editor() {
+                function done_fn(val, next: boolean) {
+                  if (val) {
+                    opts.init.teams[~~(team.idx / 2)][team.idx % 2] = val;
+                  }
+                  renderAll(true);
+                  span.click(editor);
+                  const labels = opts.el.find('.team[data-teamid=' + (team.idx + 1) + '] div.label:first');
+                  if (labels.length && next === true && round === 0) {
+                    $(labels).click();
+                  }
                 }
-                renderAll(true);
-                span.click(editor);
-                const labels = opts.el.find('.team[data-teamid=' + (team.idx + 1) + '] div.label:first');
-                if (labels.length && next === true && round === 0) {
-                  $(labels).click();
-                }
+
+                span.unbind();
+                opts.decorator.edit(span, team.name, done_fn);
               }
 
-              span.unbind();
-              opts.decorator.edit(span, team.name, done_fn);
-            }
-
-            editor();
-          });
-          if (team.name) {
+              editor();
+            });
+          }
+          if (team.name && opts.allowChangingScores) {
             sEl.addClass('editable');
             sEl.click(function() {
               const span = $(this);
@@ -1052,7 +1057,7 @@ interface Options {
       $.error('skipSecondaryFinal setting is viable only in double elimination mode');
     }
 
-    if (opts.save) {
+    if (opts.save && opts.allowResizing) {
       embedEditButtons(topCon, data, opts);
     }
 
@@ -1096,7 +1101,7 @@ interface Options {
 
     const rounds = roundCount(data.teams.length);
 
-    if (opts.save) {
+    if (opts.save && opts.allowResizing) {
       topCon.css('width', rounds * opts.roundWidth + 40);
     }
     else {
@@ -1188,6 +1193,9 @@ interface Options {
       opts.init.teams = !opts.init.teams || opts.init.teams.length === 0 ? [['', '']] : opts.init.teams;
       opts.skipConsolationRound = opts.skipConsolationRound || false;
       opts.skipSecondaryFinal = opts.skipSecondaryFinal || false;
+      opts.allowRenaming = (opts.allowRenaming === undefined) ? true : opts.allowRenaming;
+      opts.allowResizing = (opts.allowResizing === undefined) ? true : opts.allowResizing;
+      opts.allowChangingScores = (opts.allowChangingScores === undefined) ? true : opts.allowChangingScores;
       if (opts.dir !== 'lr' && opts.dir !== 'rl') {
         $.error('Direction must be either: "lr" or "rl"');
       }
