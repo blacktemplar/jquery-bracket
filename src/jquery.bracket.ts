@@ -151,6 +151,14 @@ interface Options {
      return {source: null, name: null, id: -1, idx: -1, score: null};
   }
 
+  function realHeight(el) {
+    var height = 0;
+    el.children().each(function(){
+      height = height + $(this).outerHeight(true);
+    });
+    return height;
+  }
+
   function teamsInResultOrder(match: MatchResult) {
     if (isNumber(match.a.score) && isNumber(match.b.score)) {
       if (match.a.score > match.b.score) {
@@ -270,10 +278,10 @@ interface Options {
     tC.css('top', '');
     tC.css('position', 'absolute');
     if (skipConsolationRound) {
-      tC.css('top', (match.el.height() / 2 - tC.height() / 2) + 'px');
+      tC.css('top', (match.el.height() / 2 - realHeight(tC) / 2) + 'px');
     }
     else {
-      tC.css('bottom', (-tC.height() / 2) + 'px');
+      tC.css('bottom', (-realHeight(tC) / 2) + 'px');
     }
   };
 
@@ -321,7 +329,7 @@ interface Options {
           const height = (winners.el.height()) / 2;
           consol.el.css('height', (height) + 'px');
 
-          const topShift = tC.height();
+          const topShift = realHeight(tC);
 
           tC.css('top', (topShift) + 'px');
         });
@@ -353,7 +361,8 @@ interface Options {
     }
   };
 
-  const loserAlignment = (teamCon: JQuery, match: Match) => () => teamCon.css('top', (match.el.height() / 2 - teamCon.height() / 2) + 'px');
+  const loserAlignment =
+    (teamCon: JQuery, match: Match) => () => teamCon.css('top', (match.el.height() / 2 - realHeight(teamCon) / 2) + 'px');
 
   function prepareLosers(winners: Bracket, losers: Bracket, teamCount: number, skipGrandFinalComeback: boolean) {
     const rounds = Math.log(teamCount * 2) / Math.log(2) - 1;
@@ -382,7 +391,7 @@ interface Options {
           else if (r < rounds - 1 || n < 1) {
             const cb = (n % 2 === 0) ? (tC, match): Connector => {
               // inside lower bracket
-              const connectorOffset = tC.height() / 4;
+              const connectorOffset = realHeight(tC) / 4;
               var height = 0;
               var shift = 0;
 
@@ -449,7 +458,7 @@ interface Options {
             winnerBubbles);
 
           match.connectorCb(function(tC): Connector {
-            return {height: 0, shift: tC.height() / 2};
+            return {height: 0, shift: realHeight(tC) / 2};
           });
 
           match2.connectorCb(function() {
@@ -459,7 +468,7 @@ interface Options {
             const height = (winners.el.height() + losers.el.height());
             match2.el.css('height', (height) + 'px');
 
-            const topShift = (winners.el.height() / 2 + winners.el.height() + losers.el.height() / 2) / 2 - tC.height();
+            const topShift = (winners.el.height() / 2 + winners.el.height() + losers.el.height() / 2) / 2 - realHeight(tC);
 
             tC.css('top', (topShift) + 'px');
           });
@@ -477,7 +486,7 @@ interface Options {
       }
       match.el.css('height', (height) + 'px');
 
-      const topShift = (winners.el.height() / 2 + winners.el.height() + losers.el.height() / 2) / 2 - tC.height();
+      const topShift = (winners.el.height() / 2 + winners.el.height() + losers.el.height() / 2) / 2 - realHeight(tC);
 
       tC.css('top', (topShift) + 'px');
     });
@@ -495,7 +504,7 @@ interface Options {
         const height = (winners.el.height() + losers.el.height()) / 2;
         consol.el.css('height', (height) + 'px');
 
-        const topShift = (winners.el.height() / 2 + winners.el.height() + losers.el.height() / 2) / 2 + tC.height() / 2 - height;
+        const topShift = (winners.el.height() / 2 + winners.el.height() + losers.el.height() / 2) / 2 + realHeight(tC) / 2 - height;
 
         tC.css('top', (topShift) + 'px');
       });
@@ -512,8 +521,8 @@ interface Options {
       var shift;
       var height;
 
-      const connectorOffset = tC.height() / 4;
-      const topShift = (winners.el.height() / 2 + winners.el.height() + losers.el.height() / 2) / 2 - tC.height() / 2;
+      const connectorOffset = realHeight(tC) / 4;
+      const topShift = (winners.el.height() / 2 + winners.el.height() + losers.el.height() / 2) / 2 - realHeight(tC) / 2;
       const matchupOffset = topShift - winners.el.height() / 2;
       if (winners.winner().id === 0) {
         height = matchupOffset + connectorOffset * 2;
@@ -527,7 +536,7 @@ interface Options {
         height = matchupOffset + connectorOffset;
         shift = connectorOffset * 2;
       }
-      height -= tC.height() / 2;
+      height -= realHeight(tC) / 2;
       return {height: height, shift: shift};
     });
 
@@ -535,8 +544,8 @@ interface Options {
       var shift;
       var height;
 
-      const connectorOffset = tC.height() / 4;
-      const topShift = (winners.el.height() / 2 + winners.el.height() + losers.el.height() / 2) / 2 - tC.height() / 2;
+      const connectorOffset = realHeight(tC) / 4;
+      const topShift = (winners.el.height() / 2 + winners.el.height() + losers.el.height() / 2) / 2 - realHeight(tC) / 2;
       const matchupOffset = topShift - winners.el.height() / 2;
       if (losers.winner().id === 0) {
         height = matchupOffset;
@@ -550,7 +559,7 @@ interface Options {
         height = matchupOffset + connectorOffset;
         shift = connectorOffset * 2;
       }
-      height += tC.height() / 2;
+      height += realHeight(tC) / 2;
       return {height: -height, shift: -shift};
     });
   }
@@ -942,7 +951,7 @@ interface Options {
           connectorCb = cb;
         },
         connect: function(cb: ConnectorProvider) {
-          const connectorOffset = teamCon.height() / 4;
+          const connectorOffset = realHeight(teamCon) / 4;
           const matchupOffset = matchCon.height() / 2;
           var shift;
           var height;
@@ -1025,7 +1034,7 @@ interface Options {
           matchCon.append(teamCon);
 
           this.el.css('height', (round.bracket.el.height() / round.size()) + 'px');
-          teamCon.css('top', (this.el.height() / 2 - teamCon.height() / 2) + 'px');
+          teamCon.css('top', (this.el.height() / 2 - realHeight(teamCon) / 2) + 'px');
 
           /* todo: move to class */
           if (alignCb !== null) {
