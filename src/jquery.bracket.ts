@@ -729,9 +729,9 @@ interface Options {
     }
 
     if (!opts.decorator) {
-      opts.decorator = {};
+      opts.decorator = {edit: defaultEdit, render: defaultRender, renderMatch: defaultRenderMatch};
     }
-    
+
     if (!opts.decorator.edit) {
       opts.decorator.edit = defaultEdit;
     }
