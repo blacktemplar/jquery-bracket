@@ -728,11 +728,18 @@ interface Options {
       opts.userData = null;
     }
 
-    if (opts.decorator && (!opts.decorator.edit || !opts.decorator.render || !opts.decorator.renderMatch)) {
-      throw Error('Invalid decorator input');
+    if (!opts.decorator) {
+      opts.decorator = {};
     }
-    else if (!opts.decorator) {
-      opts.decorator = {edit: defaultEdit, render: defaultRender, renderMatch: defaultRenderMatch};
+    
+    if (!opts.decorator.edit) {
+      opts.decorator.edit = defaultEdit;
+    }
+    if (!opts.decorator.render) {
+      opts.decorator.render = defaultRender;
+    }
+    if (!opts.decorator.renderMatch) {
+      opts.decorator.renderMatch = defaultRenderMatch;
     }
 
     var data;
