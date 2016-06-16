@@ -1044,7 +1044,7 @@ interface Options {
 
         },
         results: function() {
-          return [match.a.score, match.b.score];
+          return [match.a.score, match.b.score, results ? results[2] : null];
         }
       };
     }
